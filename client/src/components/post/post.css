@@ -76,3 +76,12 @@
   border-bottom: 1px dashed gray;
   font-size: 15px;
 }
+
+.postText {
+  text-transform: lowercase;
+  display: block;
+}
+
+.postText:first-letter {
+  text-transform: capitalize;
+}
