@@ -55,7 +55,7 @@ export default function Rightbar({ user }) {
             <b>Bill Gates</b> and <b>2 other friends</b> have a birhday today.
           </span>
         </div>
-        <img className="rightbarAd" src="assets/ad.png" alt="" />
+        <img className="rightbarAd" src="assets/ad.jpg" alt="" />
         <h4 className="rightbarTitle">Online Friends</h4>
         <ul className="rightbarFriendList">
           {Users.map(u => (
@@ -90,7 +90,7 @@ export default function Rightbar({ user }) {
             <span className="rightbarInfoValue">
               {user.relationship === 1
                 ? 'Single'
-                : user.relationship === 1
+                : user.relationship === 2
                 ? 'Married'
                 : 'In a relationship'}
             </span>
