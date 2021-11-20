@@ -94,3 +94,12 @@
   object-fit: cover;
   cursor: pointer;
 }
+
+.topbarLinks {
+  text-decoration: none;
+  color: #fff;
+}
+
+.topbarLinks:visited {
+  color: #fff;
+}
