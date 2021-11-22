@@ -70,6 +70,8 @@
   margin-right: 15px;
   cursor: pointer;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .topbarIconBadge {
@@ -93,6 +95,8 @@
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .topbarLinks {
