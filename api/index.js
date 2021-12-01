@@ -10,6 +10,7 @@ const authRoute = require('./routes/auth')
 const postRoute = require('./routes/posts')
 const conversationRoute = require('./routes/conversations')
 const messageRoute = require('./routes/messages')
+const router = express.Router()
 const path = require('path')
 
 // Connecting App to Express
