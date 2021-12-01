@@ -13,12 +13,36 @@ export default function Messenger() {
   const [currentChat, setCurrentChat] = useState(null)
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
-  const socket = useRef(io('ws://localhost:8900'))
+  const [arrivalMessage, setArrivalMessage] = useState(null)
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const socket = useRef()
   const { user } = useContext(AuthContext)
   const scrollRef = useRef()
 
   useEffect(() => {
+    socket.current = io('ws://localhost:8900')
+    socket.current.on('getMessage', data => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now()
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sender) &&
+      setMessages(prev => [...prev, arrivalMessage])
+  }, [arrivalMessage, currentChat])
+
+  useEffect(() => {
     socket.current.emit('addUser', user._id)
+    socket.current.on('getUsers', users => {
+      setOnlineUsers(
+        user.followings.filter(f => users.some(u => u.userId === f))
+      )
+    })
   }, [user])
 
   useEffect(() => {
@@ -53,6 +77,14 @@ export default function Messenger() {
       conversationId: currentChat._id
     }
 
+    const receiverId = currentChat.members.find(member => member !== user._id)
+
+    socket.current.emit('sendMessage', {
+      senderId: user._id,
+      receiverId,
+      text: newMessage
+    })
+
     try {
       const res = await axios.post('/messages', message)
       setMessages([...messages, res.data])
@@ -63,7 +95,7 @@ export default function Messenger() {
   }
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ bahavior: 'smooth' })
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
   return (
@@ -72,11 +104,7 @@ export default function Messenger() {
       <div className="messenger">
         <div className="chatMenu">
           <div className="chatMenuWrapper">
-            <input
-              className="chatMenuInput"
-              type="text"
-              placeholder="Search for friends"
-            />
+            <input placeholder="Search for friends" className="chatMenuInput" />
             {conversations.map(c => (
               <div onClick={() => setCurrentChat(c)}>
                 <Conversation conversation={c} currentUser={user} />
@@ -98,7 +126,7 @@ export default function Messenger() {
                 <div className="chatBoxBottom">
                   <textarea
                     className="chatMessageInput"
-                    placeholder="Write something..."
+                    placeholder="write something..."
                     onChange={e => setNewMessage(e.target.value)}
                     value={newMessage}
                   ></textarea>
@@ -116,7 +144,11 @@ export default function Messenger() {
         </div>
         <div className="chatOnline">
           <div className="chatOnlineWrapper">
-            <ChatOnline />
+            <ChatOnline
+              onlineUsers={onlineUsers}
+              currentId={user._id}
+              setCurrentChat={setCurrentChat}
+            />
           </div>
         </div>
       </div>
